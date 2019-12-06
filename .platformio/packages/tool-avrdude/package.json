@@ -1,0 +1,7 @@
+{
+    "description": "AVRDUDE",
+    "name": "tool-avrdude",
+    "system": "darwin_x86_64",
+    "url": "http://download.savannah.gnu.org/releases/avrdude/",
+    "version": "1.60300.190628"
+}

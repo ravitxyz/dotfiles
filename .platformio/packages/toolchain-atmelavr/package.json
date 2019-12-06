@@ -1,0 +1,7 @@
+{
+    "description": "avr-gcc",
+    "name": "toolchain-atmelavr",
+    "system": "darwin_x86_64",
+    "url": "https://www.microchip.com/mplab/avr-support/avr-and-arm-toolchains-c-compilers",
+    "version": "1.50400.190710"
+}

@@ -2,9 +2,9 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/wes/.oh-my-zsh
-export PROJECT_HOME=/home/wes/projects
-export CURRENT_PROJECT=riverrun
+export ZSH=/Users/ravit.s/.oh-my-zsh
+export PROJECT_HOME=/home/ravit.s/projects
+export CURRENT_PROJECT=arduino_motorcycle_guage
 
 # ZSH_THEME="candy"
 # ZSH_THEME="amuse"
@@ -64,3 +64,9 @@ alias hl="heroku login"
 # vps stuff
 alias finnegan="ssh root@$FINNEGAN_VPS"
 
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/ravit.s/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ravit.s/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/ravit.s/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ravit.s/google-cloud-sdk/completion.zsh.inc'; fi

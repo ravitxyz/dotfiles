@@ -53,7 +53,7 @@ set noswapfile
 set novb
 set nowrap
 set number
-set relativenumber
+" set relativenumber
 set ruler
 set scrolloff=8
 set showmatch
