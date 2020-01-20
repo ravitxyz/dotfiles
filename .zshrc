@@ -2,9 +2,9 @@
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/ravit.s/.oh-my-zsh
-export PROJECT_HOME=/home/ravit.s/projects
-export CURRENT_PROJECT=arduino_motorcycle_guage
+export ZSH=/home/ravit/.oh-my-zsh
+export PROJECT_HOME=/home/ravit/projects
+export CURRENT_PROJECT=
 
 # ZSH_THEME="candy"
 # ZSH_THEME="amuse"
@@ -29,6 +29,8 @@ alias ..="cd .."
 alias ...="cd ../.."
 alias ls='ls -lah'
 alias sz='source ~/.zshrc'
+
+alias cdoc='/mnt/c/Users/ravit/Google\ Drive/Master/projects'
 
 # projects
 alias project="cd ~/projects/$CURRENT_PROJECT"
@@ -70,3 +72,11 @@ if [ -f '/Users/ravit.s/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/ravit.s
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/ravit.s/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/ravit.s/google-cloud-sdk/completion.zsh.inc'; fi
+
+
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+# path to anconda 3 installation
+export PATH="/home/ravit/anaconda3/bin:$PATH"

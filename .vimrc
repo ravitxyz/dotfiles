@@ -1,6 +1,3 @@
-" Wes Doyle vimrc
-" Last Update March 20 2018
-
 set nocompatible
 
 syntax on
@@ -41,6 +38,7 @@ colorscheme PaperColor
 set autoindent
 set bg=dark
 set backspace=indent,eol,start
+set clipboard=unnamedplus
 set expandtab
 set ignorecase
 set incsearch
@@ -53,7 +51,7 @@ set noswapfile
 set novb
 set nowrap
 set number
-" set relativenumber
+set relativenumber
 set ruler
 set scrolloff=8
 set showmatch
@@ -85,6 +83,7 @@ let g:airline_powerline_fonts = 1
 map <C-n> :NERDTreeToggle<CR>
 
 let test#python#runner = 'pytest'
+
 
 "Gvim mods
 set encoding=utf-8

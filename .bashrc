@@ -116,3 +116,9 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+# added by Anaconda3 installer
+export PATH="/home/ravit/anaconda3/bin:$PATH"
