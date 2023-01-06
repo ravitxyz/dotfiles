@@ -12,7 +12,7 @@ return {
   color_scheme     	= "Catppuccin Mocha"   	, -- full list @ wezfurlong.org/wezterm/colorschemes/index.html
   colors           	= {        	  -- color_scheme takes precedence over these
     foreground     	= "silver" 	, -- [silver] The default text color
-    background     	= "black"  	, -- [black]  The default background color
+    background     	= "#212123"  	, -- [black]  The default background color
     cursor_bg      	= "#52ad70"	, -- [#52ad70] Overrides the cell background color when the current cell is occupied by the cursor and the cursor style is set to Block
     cursor_fg      	= "black"  	, -- [black]   Overrides the text color when the current cell is occupied by the cursor
     cursor_border  	= "#52ad70"	, -- [#52ad70] Specifies the border color of the cursor when the cursor style is set to Block, of the color of the vertical or horizontal bar when the cursor style is set to Bar or Underline.
