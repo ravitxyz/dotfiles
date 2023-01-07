@@ -22,11 +22,9 @@ return require('packer').startup(function(use)
   'nvim-telescope/telescope.nvim', tag = '0.1.0',
 -- or                            , branch = '0.1.x',
   requires = { {'nvim-lua/plenary.nvim'} }
-  
 }
   use({
     'rose-pine/neovim',
-    
     as = 'rose-pine',
     config = function()
         vim.cmd('colorscheme rose-pine')
@@ -40,7 +38,6 @@ return require('packer').startup(function(use)
   use('theprimeagen/harpoon')
   use('mbbill/undotree')
   use('tpope/vim-fugitive')
-  
   use {
   'VonHeikemen/lsp-zero.nvim',
     requires = {
@@ -73,7 +70,6 @@ return require('packer').startup(function(use)
       run = function() vim.fn["mkdp#util#install"]() end,
   })
 
-  
   use {
   'nvim-lualine/lualine.nvim',
   requires = { 'kyazdani42/nvim-web-devicons', opt = true }
@@ -83,6 +79,16 @@ return require('packer').startup(function(use)
       tag = "*", -- Use for stability; omit to use `main` branch for the latest features
       config = function()
           require("nvim-surround").setup({
+              -- Configuration here, or leave empty to use defaults
+          })
+      end
+  })
+
+
+  use({
+      "tpope/vim-commentary",
+      config = function()
+          require("vim-commentary").setup({
               -- Configuration here, or leave empty to use defaults
           })
       end
