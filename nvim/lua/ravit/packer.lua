@@ -93,6 +93,8 @@ return require('packer').startup(function(use)
           })
       end
   })
-
+ use ({ 
+     'dccsillag/magma-nvim', run = ':UpdateRemotePlugins'
+   })
 end)
 

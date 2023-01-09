@@ -36,3 +36,6 @@ vim.opt.splitbelow = true
 
 vim.opt.iskeyword:append("-")
 
+-- turn off showmode with lualine
+vim.opt.showmode = false
+
