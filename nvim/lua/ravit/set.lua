@@ -1,4 +1,4 @@
-vim.opt.guicursor = ""
+--vim.opt.guicursor = ""
 
 -- line numbers
 vim.opt.nu = true
