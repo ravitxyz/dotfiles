@@ -144,6 +144,11 @@ _G.packer_plugins = {
     path = "/home/ravit/.local/share/nvim/site/pack/packer/start/lualine.nvim",
     url = "https://github.com/nvim-lualine/lualine.nvim"
   },
+  ["magma-nvim"] = {
+    loaded = true,
+    path = "/home/ravit/.local/share/nvim/site/pack/packer/start/magma-nvim",
+    url = "https://github.com/dccsillag/magma-nvim"
+  },
   ["markdown-preview.nvim"] = {
     loaded = true,
     path = "/home/ravit/.local/share/nvim/site/pack/packer/start/markdown-preview.nvim",
@@ -218,6 +223,11 @@ _G.packer_plugins = {
     path = "/home/ravit/.local/share/nvim/site/pack/packer/start/rose-pine",
     url = "https://github.com/rose-pine/neovim"
   },
+  ["telescope-file-browser.nvim"] = {
+    loaded = true,
+    path = "/home/ravit/.local/share/nvim/site/pack/packer/start/telescope-file-browser.nvim",
+    url = "https://github.com/nvim-telescope/telescope-file-browser.nvim"
+  },
   ["telescope.nvim"] = {
     loaded = true,
     path = "/home/ravit/.local/share/nvim/site/pack/packer/start/telescope.nvim",
@@ -232,6 +242,11 @@ _G.packer_plugins = {
     loaded = true,
     path = "/home/ravit/.local/share/nvim/site/pack/packer/start/vim-be-good",
     url = "https://github.com/ThePrimeagen/vim-be-good"
+  },
+  ["vim-commentary"] = {
+    loaded = true,
+    path = "/home/ravit/.local/share/nvim/site/pack/packer/start/vim-commentary",
+    url = "https://github.com/tpope/vim-commentary"
   },
   ["vim-fugitive"] = {
     loaded = true,

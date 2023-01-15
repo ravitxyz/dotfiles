@@ -1,4 +1,4 @@
--- Only required if you have packer configured as `opt`
+-pv Only required if you have packer configured as `opt`
 vim.cmd [[packadd packer.nvim]]
 
 return require('packer').startup(function(use)
@@ -23,6 +23,11 @@ return require('packer').startup(function(use)
 -- or                            , branch = '0.1.x',
   requires = { {'nvim-lua/plenary.nvim'} }
 }
+  use {
+    "nvim-telescope/telescope-file-browser.nvim"
+  } 
+  
+
   use({
     'rose-pine/neovim',
     as = 'rose-pine',
@@ -84,16 +89,9 @@ return require('packer').startup(function(use)
       end
   })
 
-
-  use({
-      "tpope/vim-commentary",
-      config = function()
-          require("vim-commentary").setup({
-              -- Configuration here, or leave empty to use defaults
-          })
-      end
-  })
- use ({ 
+  use({"tpope/vim-commentary"})
+ 
+  use ({ 
      'dccsillag/magma-nvim', run = ':UpdateRemotePlugins'
    })
 end)
