@@ -18,6 +18,7 @@ vim.keymap.set("n", "<A-o>", "o<Esc>")
 vim.keymap.set("n", "<A-O>", "O<Esc>")
 
 vim.keymap.set("n", "J", "mzJ`z")
+
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
