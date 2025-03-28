@@ -1,0 +1,19 @@
+macos-titlebar-style = "hidden"
+
+# cursor
+cursor-style = block
+cursor-style-blink = false
+shell-integration-features = no-cursor
+
+# font
+font-family = FiraCode Nerd Font Mono
+font-size = 16
+font-thicken = true
+# font-style = Reg
+# font-style-bold = ExtraBold
+# font-style-italic = SemiBold Italic
+# font-style-bold-italic = ExtraBold Italic
+
+# theme
+theme = catppuccin-mocha
+
