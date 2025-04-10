@@ -65,6 +65,16 @@ lspconfig.basedpyright.setup {
 				typeCheckingMode = "basic",
 			}
 		}
+	},
+	handlers = {
+		["textDocument/publishDiagnostics"] = vim.lsp.with(
+			vim.lsp.diagnostic.on_publish_diagnostics, {
+				virtual_text = false,  -- Disable inline diagnostics
+				signs = true,          -- Keep the gutter signs
+				underline = true,      -- Keep underlining the issues
+				update_in_insert = false,
+			}
+		)
 	}
 }
 

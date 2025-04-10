@@ -62,26 +62,7 @@ return {
       vim.keymap.set("n", "<leader>dr", dap.repl.open)
     end,
   },
-  -- Formatting and linting
-  {
-    "jose-elias-alvarez/null-ls.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-      local null_ls = require("null-ls")
-      null_ls.setup({
-        sources = {
-          null_ls.builtins.formatting.ruff,
-          null_ls.builtins.diagnostics.ruff,
-        },
-      })
-
-      -- Autoformat on save
-      vim.cmd [[autocmd BufWritePre *.py lua vim.lsp.buf.format()]]
-
-      -- Keymaps
-      vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
-    end,
-  },
+  -- Formatting handled by conform.nvim in python_format.lua
   -- Auto-completion
   {
     "hrsh7th/nvim-cmp",
