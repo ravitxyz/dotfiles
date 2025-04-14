@@ -5,15 +5,31 @@ cursor-style = block
 cursor-style-blink = false
 shell-integration-features = no-cursor
 
+# theme
+theme = rose-pine
+
+# theme = Kanagawa Wave
+#
 # font
-font-family = FiraCode Nerd Font Mono
-font-size = 16
-font-thicken = true
+# font-family = FiraCode Nerd Font Mono
+# font-size = 16
+# font-thicken = false
 # font-style = Reg
 # font-style-bold = ExtraBold
 # font-style-italic = SemiBold Italic
 # font-style-bold-italic = ExtraBold Italic
 
-# theme
-theme = catppuccin-mocha
+font-family = Symbols Nerd Font Mono
+font-family = Hack Nerd Font
+font-size = 12
+
+shell-integration = zsh
+window-save-state = always
+bold-is-bright = true
+link-url = true
+
+macos-auto-secure-input = true
+macos-secure-input-indication = true
+
+quit-after-last-window-closed = true
 

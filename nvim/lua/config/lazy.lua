@@ -35,7 +35,7 @@ require("lazy").setup({
 })
 
 
-vim.cmd('colorscheme catppuccin')
+vim.cmd('colorscheme rose-pine')
 vim.opt.termguicolors = true -- bufferline
 
 -- local builtin = require('telescope.builtin')

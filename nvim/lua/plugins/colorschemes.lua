@@ -382,7 +382,7 @@ return {
       -- vim.g.gruvbox_material_colors_override = { bg0 = '#191B1D' } -- #0e1010
       -- vim.g.gruvbox_material_better_performance = 1
 
-      vim.cmd.colorscheme("gruvbox-material")
+      -- vim.cmd.colorscheme("gruvbox-material")
     end,
   },
 
@@ -418,6 +418,42 @@ return {
 
     init = function()
       -- vim.cmd.colorscheme("vesper")
+    end,
+  },
+  {
+    "rose-pine/neovim",
+    name = "rose-pine",
+    priority = 1000,
+    config = function()
+      require("rose-pine").setup({
+        variant = "main", -- auto, main, moon, or dawn
+        dark_variant = "main", -- main, moon, or dawn
+        dim_inactive_windows = false,
+        extend_background_behind_borders = true,
+
+        enable = {
+          terminal = true,
+          legacy_highlights = true,
+          migrations = true,
+        },
+
+        styles = {
+          bold = false, -- Disable bold to reduce the emphasis
+          italic = false,
+          transparency = false,
+        },
+        
+        -- Reduce the highlighting intensity for specific groups
+        highlight_groups = {
+          -- Tone down control flow statements so they're not extra emphasized
+          Conditional = { fg = "subtle" },
+          Repeat = { fg = "subtle" },
+          Statement = { fg = "subtle" },
+          Comment = { fg = "muted" },
+        },
+      })
+
+      -- Let the theme be loaded via lazy.lua
     end,
   },
 }

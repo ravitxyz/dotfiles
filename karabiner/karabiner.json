@@ -53,34 +53,6 @@
                         ]
                     },
                     {
-                        "description": "CTRL+h to backspace",
-                        "manipulators": [
-                            {
-                                "conditions": [
-                                    {
-                                        "bundle_identifiers": [
-                                            "com.googlecode.iterm2",
-                                            "net.kovidgoyal.kitty",
-                                            "co.zeit.hyper",
-                                            "com.apple.Terminal",
-                                            "io.alacritty"
-                                        ],
-                                        "type": "frontmost_application_unless"
-                                    }
-                                ],
-                                "from": {
-                                    "key_code": "h",
-                                    "modifiers": {
-                                        "mandatory": ["left_control"],
-                                        "optional": ["any"]
-                                    }
-                                },
-                                "to": [{ "key_code": "delete_or_backspace" }],
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "CTRL-W to delete-backward-word",
                         "manipulators": [
                             {
@@ -135,6 +107,15 @@
                         "device_address": "d8-a7-d2-48-01-11",
                         "is_keyboard": true,
                         "is_pointing_device": true
+                    },
+                    "ignore": false
+                },
+                {
+                    "identifiers": {
+                        "is_keyboard": true,
+                        "is_pointing_device": true,
+                        "product_id": 12869,
+                        "vendor_id": 6645
                     },
                     "ignore": false
                 }
