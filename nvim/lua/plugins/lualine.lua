@@ -24,7 +24,7 @@ return {
         lualine_c = {
           {
             'filename',
-            path = 1, -- Show relative path
+            path = 0, -- Only show filename, no path
             symbols = {
               modified = '●', -- Text to show when the file is modified
               readonly = '🔒', -- Text to show when the file is non-modifiable or readonly
