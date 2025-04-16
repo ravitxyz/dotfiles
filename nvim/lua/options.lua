@@ -1,6 +1,6 @@
 vim.opt.nu = true -- enable line numbers
 vim.opt.relativenumber = true -- enable relative live numbers
-vim.opt.cursorline = true -- highlight the current line
+-- vim.opt.cursorline = true -- highlight the current line
 vim.opt.colorcolumn = "80" -- highlight column at 80 characters
 
 vim.o.tabstop = 4 -- A TAB character looks like 4 spaces
