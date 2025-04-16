@@ -64,7 +64,11 @@
                                             "net.kovidgoyal.kitty",
                                             "co.zeit.hyper",
                                             "com.apple.Terminal",
-                                            "io.alacritty"
+                                            "io.alacritty",
+                                            "io.neovim.nvim",
+                                            "com.github.neovim-qt",
+                                            "org.neovim.nvim",
+                                            "com.microsoft.VSCode"
                                         ],
                                         "type": "frontmost_application_unless"
                                     }
