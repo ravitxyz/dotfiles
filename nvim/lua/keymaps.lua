@@ -46,7 +46,8 @@ vim.keymap.set('n', '<leader>P', '"+P', { noremap = true, silent = true })
 vim.keymap.set('v', '<leader>p', '"+p', { noremap = true, silent = true })
 vim.keymap.set('v', '<leader>P', '"+P', { noremap = true, silent = true })
 
--- Map Ctrl+W in insert mode to delete the word before the cursor
--- This overrides Karabiner's mapping to ensure consistent behavior in Neovim
-vim.keymap.set('i', '<C-w>', '<C-w>', { noremap = true, silent = true })
+-- Map Ctrl+W and Ctrl+H in insert mode to delete the word before the cursor
+-- This uses Neovim's native word deletion in insert mode
+vim.api.nvim_set_keymap('i', '<C-w>', '<C-w>', {noremap = true})
+vim.api.nvim_set_keymap('i', '<C-h>', '<C-w>', {noremap = true})
 
