@@ -20,9 +20,24 @@
 )
 
 (defvar
-  ;; Note: consider using different time values for your different fingers.
-  ;; For example, your pinkies might be slower to release keys and index
-  ;; fingers faster.
+  ;; Different time values for different fingers based on dexterity
+  ;; Pinkies (slower): a, ;
+  ;; Ring fingers (medium): s, l
+  ;; Middle fingers (faster): d
+  ;; Index fingers (fastest): f
+  pinky-tap-time 300
+  pinky-hold-time 225
+  
+  ring-tap-time 250
+  ring-hold-time 200
+  
+  middle-tap-time 220
+  middle-hold-time 175
+  
+  index-tap-time 200
+  index-hold-time 150
+  
+  ;; Default times (used for non-finger-specific settings)
   tap-time 250
   hold-time 200
 
@@ -42,7 +57,7 @@
 (deflayer base
   esc  f1   f2   f3   f4   f5   f6   prev pp   next mute vold volu bspc
   tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
-  @caps @a  @s  @d  @f  g    h    @j  @k  @l  @;   '    ret
+  @caps @a  @s  @d  @f  g    h    j    k    @l  @;   '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
   @fnl  lctl lmet lalt           @sym           ralt rmet
 )
@@ -90,20 +105,37 @@
     (on-idle-fakekey to-base tap 20)
   )
 
-  ;; Main modifiers and special keys
+  ;; Main modifiers and special keys with finger-specific timings
   caps (tap-hold $tap-time $hold-time esc lctl)
-  a (tap-hold-release-keys $tap-time $hold-time (multi a @tap) lmet $left-hand-keys)
-  s (tap-hold-release-keys $tap-time $hold-time (multi s @tap) lalt $left-hand-keys)
-  d (tap-hold-release-keys $tap-time $hold-time (multi d @tap) lctl $left-hand-keys)
-  f (tap-hold-release-keys $tap-time $hold-time (multi f @tap) lsft $left-hand-keys)
-  j (tap-hold-release-keys $tap-time $hold-time (multi j @tap) rsft $right-hand-keys)
-  k (tap-hold-release-keys $tap-time $hold-time (multi k @tap) rctl $right-hand-keys)
-  l (tap-hold-release-keys $tap-time $hold-time (multi l @tap) ralt $right-hand-keys)
-  ; (tap-hold-release-keys $tap-time $hold-time (multi ; @tap) rmet $right-hand-keys)
   
-  ;; Fn key for activating function key layer
-  fnl (tap-hold $tap-time $hold-time fn (layer-toggle fn))
+  ;; Left hand home row mods - finger-specific timings
+  ;; Pinky: a (lmet)
+  a (tap-hold-release-keys $pinky-tap-time $pinky-hold-time (multi a @tap) lmet $left-hand-keys)
+  
+  ;; Ring: s (lalt)
+  s (tap-hold-release-keys $ring-tap-time $ring-hold-time (multi s @tap) lalt $left-hand-keys)
+  
+  ;; Middle: d (lctl)
+  d (tap-hold-release-keys $middle-tap-time $middle-hold-time (multi d @tap) lctl $left-hand-keys)
+  
+  ;; Index: f (lsft)
+  f (tap-hold-release-keys $index-tap-time $index-hold-time (multi f @tap) lsft $left-hand-keys)
+  
+  ;; j and k as regular keys (no modifiers)
+  j j
+  k k
+  
+  ;; Right hand home row mods - finger-specific timings
+  ;; Ring: l (ralt)
+  l (tap-hold-release-keys $ring-tap-time $ring-hold-time (multi l @tap) ralt $right-hand-keys)
+  
+  ;; Pinky: ; (rmet)
+  ; (tap-hold-release-keys $pinky-tap-time $pinky-hold-time (multi ; @tap) rmet $right-hand-keys)
+  
+  ;; Fn key for activating function key layer - using thumb timing
+  fnl (tap-hold $pinky-tap-time $pinky-hold-time fn (layer-toggle fn))
   
   ;; Layer toggles - Space acts as both tap=space and hold=symbol layer
-  sym (tap-hold $tap-time $hold-time spc (layer-toggle symbols))
+  ;; Using thumb timing (same as pinky since it's typically slower)
+  sym (tap-hold $pinky-tap-time $pinky-hold-time spc (layer-toggle symbols))
 )
