@@ -50,8 +50,8 @@
 ;; Mac media keys: Using supported key codes for media functions
 (deflayer base
   esc  f1   f2   f3   f4   f5   f6   prev pp   next mute vold volu bspc
-  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
-  @caps @a  @s  @d  @f  g    h    _    _    @l  @;   '    ret
+  tab  q    @w   @e   @r   t    y    @u   @i   o    p    [    ]    \
+  @caps @a  @s  d    f    g    h    j    k    @l   @;   '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
   @fnl  lctl lmet lalt           @sym           ralt rmet
 )
@@ -74,10 +74,15 @@
 )
 
 (deflayer symbols
+  ;; Top row: Shifted numbers (14 keys)
   grv  S-1  S-2  S-3  S-4  S-5  S-6  S-7  S-8  S-9  S-0  S--  S-=  bspc
-  tab  [    ]    S-[  S-]  -    =    S-=  S-8  S-7  _    _    _    \
-  _    S-1  S-2  S-3  S-4  S-5  S-6  \    S-\  `    S-`  _    ret
-  _    1    2    3    bspc 5    6    7    8    9    0    _
+  ;; Second row: Grouping symbols and operators (14 keys)
+  tab  S-[  S-]  S-9  S-0  _    -    S--  _    =    S-=  _    _    \
+  ;; Third row: Square brackets on A/S, parentheses on D/F (13 keys)
+  _    [    ]    S-9  S-0  _    _    \    S-\  `    S-`  _    ret
+  ;; Fourth row: Numbers (12 keys)
+  _    1    2    3    4    5    6    7    8    9    0    _
+  ;; Bottom row: Keep minimal (7 keys)
   _    _    _    _              _              _    _
 )
 
@@ -102,15 +107,23 @@
   ;; Main modifiers and special keys with simplified timing
   caps (tap-hold $tap-time $hold-time esc lctl)
   
+  ;; Smart W key: sends delete-word when Control is held, otherwise just w
+  w (fork w (multi ralt bspc) (lctl))
+  
   ;; Left hand home row mods - simplified timing
   ;; Slow: a (pinky, lmet), s (ring, lalt)
   a (tap-hold-release-keys $slow-tap-time $slow-hold-time (multi a @tap) lmet $left-hand-keys)
   s (tap-hold-release-keys $slow-tap-time $slow-hold-time (multi s @tap) lalt $left-hand-keys)
   
-  ;; Fast: d (middle, lctl), f (index, lsft)
-  ;; Using basic tap-hold for d to prioritize control modifier activation
-  d (tap-hold $fast-tap-time $fast-hold-time d lctl)
-  f (tap-hold-release-keys $fast-tap-time $fast-hold-time (multi f @tap) lsft $left-hand-keys)
+  ;; Left hand QWERTY row mods
+  ;; Fast: e (middle, lctl), r (index, lsft)
+  e (tap-hold $fast-tap-time $fast-hold-time e lctl)
+  r (tap-hold-release-keys $fast-tap-time $fast-hold-time (multi r @tap) lsft $left-hand-keys)
+  
+  ;; Right hand QWERTY row mods
+  ;; u (index, lsft), i (middle, lctl) - to match left side symmetry
+  u (tap-hold-release-keys $fast-tap-time $fast-hold-time (multi u @tap) lsft $right-hand-keys)
+  i (tap-hold $fast-tap-time $fast-hold-time i lctl)
   
   ;; Right hand home row mods - simplified timing
   ;; Slow: l (ring, ralt), ; (pinky, rmet)
@@ -122,4 +135,7 @@
   
   ;; Layer toggles - Space acts as both tap=space and hold=symbol layer
   sym (tap-hold $fast-tap-time $fast-hold-time spc (layer-toggle symbols))
+
+  ;; Delete word: Ctrl+W sends Option+Backspace
+  delete-word (multi ralt bspc)
 )
