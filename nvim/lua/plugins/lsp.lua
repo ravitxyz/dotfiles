@@ -44,6 +44,9 @@ return {
           -- "basedpyright", -- Python type checking (removed in favor of ruff only)
           "ruff",         -- Python linting and formatting
           "lua_ls",       -- Lua language server
+          "tsserver",     -- JavaScript/TypeScript
+          "html",         -- HTML
+          "cssls",        -- CSS
         },
         automatic_installation = true,
       })
@@ -127,6 +130,42 @@ return {
         on_attach = function(client, bufnr)
           setup_lsp_keymaps(client, bufnr)
         end,
+      })
+
+      -- TypeScript/JavaScript
+      lspconfig.tsserver.setup({
+        on_attach = function(client, bufnr)
+          -- Disable formatting (use prettier or other formatters instead)
+          client.server_capabilities.documentFormattingProvider = false
+          client.server_capabilities.documentRangeFormattingProvider = false
+          setup_lsp_keymaps(client, bufnr)
+        end,
+        filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "javascript.jsx", "typescript.tsx" },
+        cmd = { "typescript-language-server", "--stdio" }
+      })
+
+      -- HTML
+      lspconfig.html.setup({
+        on_attach = function(client, bufnr)
+          setup_lsp_keymaps(client, bufnr)
+        end,
+        filetypes = { "html" },
+        init_options = {
+          configurationSection = { "html", "css", "javascript" },
+          embeddedLanguages = {
+            css = true,
+            javascript = true
+          },
+          provideFormatter = true
+        }
+      })
+
+      -- CSS
+      lspconfig.cssls.setup({
+        on_attach = function(client, bufnr)
+          setup_lsp_keymaps(client, bufnr)
+        end,
+        filetypes = { "css", "scss", "less" }
       })
     end,
   },

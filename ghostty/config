@@ -19,9 +19,10 @@ theme = rose-pine
 # font-style-italic = SemiBold Italic
 # font-style-bold-italic = ExtraBold Italic
 
-font-family = Symbols Nerd Font Mono
 font-family = Hack Nerd Font
+# font-family = FiraCode Nerd Font Mono
 font-size = 12
+font-thicken = false
 
 shell-integration = zsh
 window-save-state = always
