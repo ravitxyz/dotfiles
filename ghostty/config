@@ -33,4 +33,3 @@ macos-auto-secure-input = true
 macos-secure-input-indication = true
 
 quit-after-last-window-closed = true
-

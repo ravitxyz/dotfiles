@@ -41,10 +41,10 @@ return {
       -- Ensure servers are installed
       require("mason-lspconfig").setup({
         ensure_installed = {
-          -- "basedpyright", -- Python type checking (removed in favor of ruff only)
+          "basedpyright", -- Python type checking
           "ruff",         -- Python linting and formatting
           "lua_ls",       -- Lua language server
-          "tsserver",     -- JavaScript/TypeScript
+          "ts_ls",        -- JavaScript/TypeScript
           "html",         -- HTML
           "cssls",        -- CSS
         },
@@ -54,16 +54,34 @@ return {
       -- Configure language servers
       local lspconfig = require("lspconfig")
       
-      -- Basedpyright configuration removed in favor of using only ruff
+      -- Basedpyright for Python type checking and language features
+      lspconfig.basedpyright.setup({
+        on_attach = function(client, bufnr)
+          -- Disable formatting (handled by ruff)
+          client.server_capabilities.documentFormattingProvider = false
+          client.server_capabilities.documentRangeFormattingProvider = false
+          setup_lsp_keymaps(client, bufnr)
+        end,
+        settings = {
+          basedpyright = {
+            analysis = {
+              typeCheckingMode = "standard",
+              autoSearchPaths = true,
+              useLibraryCodeForTypes = true,
+              autoImportCompletions = true,
+            },
+          },
+        },
+      })
       
       -- Ruff for Python linting and formatting using the native server
       lspconfig.ruff.setup({
         cmd = { "ruff", "server" },
         on_attach = function(client, bufnr)
-          -- Enable hover to replace basedpyright
-          client.server_capabilities.hoverProvider = true
+          -- Disable hover (handled by basedpyright)
+          client.server_capabilities.hoverProvider = false
           
-          -- Enable formatting with the native server
+          -- Keep formatting with the native server
           client.server_capabilities.documentFormattingProvider = true
           client.server_capabilities.documentRangeFormattingProvider = true
           
@@ -133,7 +151,7 @@ return {
       })
 
       -- TypeScript/JavaScript
-      lspconfig.tsserver.setup({
+      lspconfig.ts_ls.setup({
         on_attach = function(client, bufnr)
           -- Disable formatting (use prettier or other formatters instead)
           client.server_capabilities.documentFormattingProvider = false
