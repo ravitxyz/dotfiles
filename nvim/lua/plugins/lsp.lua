@@ -44,7 +44,6 @@ return {
           "basedpyright", -- Python type checking
           "ruff",         -- Python linting and formatting
           "lua_ls",       -- Lua language server
-          "ts_ls",        -- JavaScript/TypeScript
           "html",         -- HTML
           "cssls",        -- CSS
         },
@@ -150,17 +149,6 @@ return {
         end,
       })
 
-      -- TypeScript/JavaScript
-      lspconfig.ts_ls.setup({
-        on_attach = function(client, bufnr)
-          -- Disable formatting (use prettier or other formatters instead)
-          client.server_capabilities.documentFormattingProvider = false
-          client.server_capabilities.documentRangeFormattingProvider = false
-          setup_lsp_keymaps(client, bufnr)
-        end,
-        filetypes = { "typescript", "javascript", "javascriptreact", "typescriptreact", "javascript.jsx", "typescript.tsx" },
-        cmd = { "typescript-language-server", "--stdio" }
-      })
 
       -- HTML
       lspconfig.html.setup({
@@ -186,5 +174,47 @@ return {
         filetypes = { "css", "scss", "less" }
       })
     end,
+  },
+  
+  -- TypeScript Tools
+  {
+    "pmizio/typescript-tools.nvim",
+    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+    opts = {
+      on_attach = function(client, bufnr)
+        -- Common LSP keymaps setup function
+        local opts = { buffer = bufnr, noremap = true, silent = true }
+        
+        -- Code navigation
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+        vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
+        vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+        
+        -- Code actions
+        vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+        
+        -- Diagnostics
+        vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+        vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+        vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)
+        vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
+      end,
+      settings = {
+        -- Spawn separate diagnostic server
+        separate_diagnostic_server = true,
+        
+        -- Diagnostic publication trigger
+        publish_diagnostic_on = "insert_leave",
+        
+        -- TypeScript server file preferences
+        tsserver_file_preferences = {
+          includeInlayParameterNameHints = "all",
+          quotePreference = "auto",
+        },
+      },
+    },
   },
 }
