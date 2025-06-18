@@ -9,6 +9,7 @@ return {
       "nvim-tree/nvim-web-devicons",
       { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
       "nvim-telescope/telescope-ui-select.nvim",
+      "debugloop/telescope-undo.nvim",
       -- "telescope-dap.nvim",
       "kkharji/sqlite.lua",
       -- "nvim-telescope/telescope-frecency.nvim",
@@ -150,6 +151,13 @@ return {
           require("telescope.builtin").buffers()
         end,
         desc = "Buffers",
+      },
+      {
+        "<leader>su",
+        function()
+          require("telescope").extensions.undo.undo()
+        end,
+        desc = "Undo Tree",
       },
     },
     config = function()
@@ -424,6 +432,7 @@ return {
       })
       telescope.load_extension("fzf")
       telescope.load_extension("ui-select")
+      telescope.load_extension("undo")
       -- telescope.load_extension("refactoring")
       -- telescope.load_extension("dap")
       -- telescope.load_extension("frecency")

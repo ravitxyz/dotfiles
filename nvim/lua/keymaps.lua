@@ -5,6 +5,8 @@ vim.g.mapleader = " "
 vim.keymap.set('n', '<leader>p', ':bp<cr>')
 vim.keymap.set('n', '<leader>n', ':bn<cr>')
 vim.keymap.set('n', '<leader>x', ':bd<cr>')
+vim.keymap.set('n', '<leader>q', ':q<cr>')
+vim.keymap.set('n', '<leader>Q', ':qa<cr>')
 
 --- Remaps from theprimeagen
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
@@ -19,8 +21,8 @@ vim.keymap.set("n", "<A-O>", "O<Esc>")
 
 vim.keymap.set("n", "J", "mzJ`z")
 
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "<C-n>", "<C-d>zz")
+vim.keymap.set("n", "<C-p>", "<C-u>zz")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
