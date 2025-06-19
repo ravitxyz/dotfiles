@@ -50,10 +50,10 @@
 ;; Mac media keys: Using supported key codes for media functions
 (deflayer base
   esc  brdn brup f3   f4   f5   f6   prev pp   next mute vold volu bspc
-  tab  q    @w   e    r    t    y    u    i    o    p    [    ]    \
+  tab  @q   @w   e    r    t    y    u    i    o    p    [    ]    \
   @caps @a  @s  @d   @f   g    @h   j    k    @l   @;   '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  @fnl  lctl lmet lalt           @sym           ralt rmet
+  @fnl  lctl @lmet lalt           @sym           @ralt @rmet
 )
 
 ;; Modified function layer with function keys in place of media keys
@@ -91,6 +91,14 @@
   _    _    _    _    _    _    home pgdn pgup end  _    _    _    \
   _    _    _    _    _    _    lft  down up   rght _    _    ret
   _    _    _    _    _    _    del  bspc tab  ret  _    _
+  _    _    _    _              _              _    _
+)
+
+(deflayer qnav
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    lft  down up   rght _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _              _              _    _
 )
 
@@ -147,4 +155,12 @@
 
   ;; Delete word: Ctrl+W sends Option+Backspace
   delete-word (multi ralt bspc)
+  
+  ;; Q navigation layer - hold Q for hjkl arrow keys
+  q (tap-hold $fast-tap-time $fast-hold-time q (layer-toggle qnav))
+  
+  ;; Modifier key remappings
+  lmet tab
+  rmet bspc
+  ralt ret
 )
