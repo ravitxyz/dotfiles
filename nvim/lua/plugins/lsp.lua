@@ -48,10 +48,20 @@ return {
           "cssls",        -- CSS
         },
         automatic_installation = true,
+        handlers = {
+          -- Disable ts_ls (new name for tsserver) since we use typescript-tools.nvim
+          ["ts_ls"] = function() end,
+          ["tsserver"] = function() end,
+        },
       })
       
       -- Configure language servers
       local lspconfig = require("lspconfig")
+      
+      -- Explicitly disable ts_ls to prevent conflicts with typescript-tools
+      lspconfig.ts_ls.setup({
+        enabled = false,
+      })
       
       -- Basedpyright for Python type checking and language features
       lspconfig.basedpyright.setup({
@@ -182,6 +192,9 @@ return {
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
     opts = {
       on_attach = function(client, bufnr)
+        -- Enable folding capability
+        client.server_capabilities.foldingRangeProvider = true
+        
         -- Common LSP keymaps setup function
         local opts = { buffer = bufnr, noremap = true, silent = true }
         
@@ -213,6 +226,11 @@ return {
         tsserver_file_preferences = {
           includeInlayParameterNameHints = "all",
           quotePreference = "auto",
+        },
+        
+        -- Enable folding ranges
+        tsserver_plugins = {
+          "@typescript-eslint/typescript-estree",
         },
       },
     },

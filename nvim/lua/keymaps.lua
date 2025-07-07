@@ -53,3 +53,10 @@ vim.keymap.set('v', '<leader>P', '"+P', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('i', '<C-w>', '<C-w>', {noremap = true})
 vim.api.nvim_set_keymap('i', '<C-h>', '<C-w>', {noremap = true})
 
+-- Ergonomic fold commands
+local opts = { noremap = true, silent = true }
+vim.keymap.set("n", "<Tab>", "za", opts) -- toggle fold
+vim.keymap.set("n", "<S-Tab>", "zA", opts) -- toggle fold recursively  
+vim.keymap.set("n", "<leader>fo", "zR", opts) -- open all folds
+vim.keymap.set("n", "<leader>fc", "zM", opts) -- close all folds
+

@@ -12,6 +12,10 @@ vim.opt.clipboard = 'unnamedplus'
 vim.opt.cmdheight=0
 
 
-vim.opt.foldmethod = "expr" -- default is "normal"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()" -- default is ""
-vim.opt.foldenable = false -- if this option is true and fold method option is other than normal, every time a document is opened everything will be folded.
+-- Configure LSP-based folding for better language support
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.lsp.foldexpr()"
+vim.opt.foldcolumn = "1"
+vim.opt.foldlevel = 99
+vim.opt.foldlevelstart = 99
+vim.opt.foldenable = true
