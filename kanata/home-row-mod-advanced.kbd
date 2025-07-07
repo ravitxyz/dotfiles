@@ -24,8 +24,8 @@
 (defvar
   ;; Simplified timing: just fast and slow options
   ;; Slow: For pinkies and ring fingers (a, s, ;)
-  slow-tap-time 275
-  slow-hold-time 225
+  slow-tap-time 225
+  slow-hold-time 175
   
   ;; Fast: For more dexterous fingers (d, f, h, l) and thumbs
   fast-tap-time 200
@@ -140,7 +140,7 @@
   h (tap-hold-release-keys $fast-tap-time $fast-hold-time (multi h @tap) rsft $right-hand-keys)
   
   ;; Alt to l (middle finger) and Command to ; (pinky)
-  l (tap-hold-release-keys $slow-tap-time $slow-hold-time (multi l @tap) ralt $right-hand-keys)
+  l (tap-hold-release-keys $fast-tap-time $fast-hold-time (multi l @tap) ralt $right-hand-keys)
   ; (tap-hold-release-keys $slow-tap-time $slow-hold-time (multi ; @tap) rmet $right-hand-keys)
   
   ;; Normal letter keys for frequently used keys
