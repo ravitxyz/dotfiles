@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Auto-updating tms wrapper
+# Checks for new worktrees and updates tms config before launching
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Run the update script silently (will skip if no changes)
+"$SCRIPT_DIR/update-tms-worktrees.sh" >/dev/null 2>&1
+
+# Launch tms interactively with any arguments passed
+exec tms "$@"

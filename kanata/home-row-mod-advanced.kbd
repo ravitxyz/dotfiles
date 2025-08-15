@@ -5,6 +5,9 @@
 ;; - tap-hold-release helps make the hold action more responsive
 ;; - pressing another key on the same half of the keyboard
 ;;   as the home row mod will activate an early tap action
+;; - brightness/volume layer: hold Tab + h/l for brightness, j/k for volume
+;;   (built-in brightness keys control internal display; external monitors
+;;   controlled separately via MonitorControl app)
 
 (defcfg
   ;; Allow unmapped keys to pass through to OS
@@ -50,7 +53,7 @@
 ;; Mac media keys: Using supported key codes for media functions
 (deflayer base
   esc  brdn brup f3   f4   f5   f6   prev pp   next mute vold volu bspc
-  tab  @q   @w   e    r    t    y    u    i    o    p    [    ]    \
+  @tab @q   @w   e    r    t    y    u    i    o    p    [    ]    \
   @caps @a  @s  @d   @f   g    @h   j    k    @l   @;   '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
   @fnl  lctl @lmet @lalt           @sym           @ralt @rmet
@@ -98,6 +101,14 @@
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _    _    _    lft  down up   rght _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _              _              _    _
+)
+
+(deflayer brightness-volume
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _    _
+  _    _    _    _    _    _    @bdn @vdn @vup @bup _    _    _
   _    _    _    _    _    _    _    _    _    _    _    _
   _    _    _    _              _              _    _
 )
@@ -158,6 +169,15 @@
   
   ;; Q navigation layer - hold Q for hjkl arrow keys
   q (tap-hold $fast-tap-time $fast-hold-time q (layer-toggle qnav))
+  
+  ;; Tab key for brightness/volume control layer
+  tab (tap-hold $fast-tap-time $fast-hold-time tab (layer-toggle brightness-volume))
+  
+  ;; Brightness and volume controls
+  bup brup  ;; Built-in brightness up key
+  bdn brdn  ;; Built-in brightness down key  
+  vup volu  ;; Volume up using kanata's built-in key
+  vdn vold  ;; Volume down using kanata's built-in key
   
   ;; Modifier key remappings
   lmet spc

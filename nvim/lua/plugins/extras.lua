@@ -107,6 +107,7 @@ return {
   -- Heuristically set buffer options
   {
     "tpope/vim-sleuth",
+    enabled = false, -- temporarily disabled to debug line number issues
   },
 
   {
@@ -203,6 +204,7 @@ return {
     "utilyre/barbecue.nvim",
     name = "barbecue",
     version = "*",
+    enabled = false, -- temporarily disabled to debug line number issues
     dependencies = {
       "SmiteshP/nvim-navic",
       "nvim-tree/nvim-web-devicons", -- optional dependency
@@ -235,6 +237,7 @@ return {
   {
     "folke/persistence.nvim",
     event = "BufReadPre", -- this will only start session saving when an actual file was opened
+    enabled = false, -- temporarily disabled to debug line number issues
     opts = {},
   },
 

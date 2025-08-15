@@ -1,0 +1,139 @@
+#!/bin/bash
+
+# sdm-connect: Connect to StrongDM resources
+# Usage: sdm-connect [OPTIONS] [RESOURCE1] [RESOURCE2] ...
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+usage() {
+    echo "Usage: sdm-connect [OPTIONS] [RESOURCE1] [RESOURCE2] ..."
+    echo ""
+    echo "Options:"
+    echo "  --hex-replicas            Connect to both hex-prod-rds-replica and hex-rc-rds-replica"
+    echo "  -h, --help               Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  sdm-connect --hex-replicas"
+    echo "  sdm-connect hex-prod-rds-replica hex-rc-rds-replica"
+    echo "  sdm-connect hex-prod-rds-replica"
+    echo ""
+    echo "Common resources:"
+    echo "  - hex-prod-rds-replica"
+    echo "  - hex-rc-rds-replica" 
+    echo "  - hex-hipaa-rds-replica"
+    echo ""
+    echo "Note: This script uses the 'sdm' CLI. Make sure it's installed and configured."
+    echo "You must have active access to resources before connecting."
+}
+
+# Parse command line arguments
+RESOURCES=()
+HEX_REPLICAS=false
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --hex-replicas)
+            HEX_REPLICAS=true
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        -*)
+            echo -e "${RED}Error: Unknown option $1${NC}"
+            usage
+            exit 1
+            ;;
+        *)
+            RESOURCES+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# Add hex replica resources if flag was specified
+if [ "$HEX_REPLICAS" = true ]; then
+    RESOURCES+=("hex-prod-rds-replica" "hex-rc-rds-replica")
+fi
+
+# Check if resources were provided
+if [ ${#RESOURCES[@]} -eq 0 ]; then
+    echo -e "${RED}Error: No resources specified${NC}"
+    usage
+    exit 1
+fi
+
+# Check if sdm CLI is available
+if ! command -v sdm &> /dev/null; then
+    echo -e "${RED}Error: 'sdm' command not found. Please install the StrongDM CLI.${NC}"
+    echo "Install from: https://www.strongdm.com/docs/admin/install-cli"
+    exit 1
+fi
+
+# Check if user is logged in
+if ! sdm status &> /dev/null; then
+    echo -e "${YELLOW}You need to log in to StrongDM first.${NC}"
+    echo -e "${BLUE}Running: sdm login${NC}"
+    sdm login
+fi
+
+echo -e "${BLUE}Connecting to resources:${NC} ${RESOURCES[*]}"
+echo -e "${YELLOW}Note: Connections will be established in the background.${NC}"
+echo -e "${YELLOW}Use 'sdm status' to see active connections.${NC}"
+echo ""
+
+# Connect to each resource
+SUCCESSFUL_CONNECTIONS=()
+FAILED_CONNECTIONS=()
+
+for resource in "${RESOURCES[@]}"; do
+    echo -e "${BLUE}Connecting to: $resource${NC}"
+    
+    if OUTPUT=$(sdm connect "$resource" 2>&1); then
+        echo -e "${GREEN}✓ Connection established to $resource${NC}"
+        if [[ "$OUTPUT" != "" ]]; then
+            echo -e "${GREEN}  $OUTPUT${NC}"
+        fi
+        SUCCESSFUL_CONNECTIONS+=("$resource")
+    else
+        echo -e "${RED}✗ Failed to connect to $resource${NC}"
+        echo -e "${RED}  Error: $OUTPUT${NC}"
+        FAILED_CONNECTIONS+=("$resource")
+    fi
+    echo ""
+done
+
+# Summary
+echo -e "${BLUE}=== Connection Summary ===${NC}"
+if [ ${#SUCCESSFUL_CONNECTIONS[@]} -gt 0 ]; then
+    echo -e "${GREEN}Successfully connected to:${NC}"
+    for resource in "${SUCCESSFUL_CONNECTIONS[@]}"; do
+        echo -e "  ✓ $resource"
+    done
+fi
+
+if [ ${#FAILED_CONNECTIONS[@]} -gt 0 ]; then
+    echo -e "${RED}Failed to connect to:${NC}"
+    for resource in "${FAILED_CONNECTIONS[@]}"; do
+        echo -e "  ✗ $resource"
+    done
+    echo ""
+    echo -e "${YELLOW}Possible reasons for connection failure:${NC}"
+    echo -e "${YELLOW}- Access not granted yet (check: sdm access requests)${NC}"
+    echo -e "${YELLOW}- Resource is not available${NC}"
+    echo -e "${YELLOW}- Network connectivity issues${NC}"
+fi
+
+echo ""
+echo -e "${BLUE}Connection commands:${NC}"
+echo -e "${YELLOW}Check status:${NC} sdm status"
+echo -e "${YELLOW}Disconnect:${NC} sdm disconnect <resource-name>"
+echo -e "${YELLOW}Disconnect all:${NC} sdm disconnect --all"

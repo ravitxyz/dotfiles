@@ -1,0 +1,94 @@
+# Starship configuration
+# Git branch truncation and customization for long branch names
+
+# Global prompt format - minimal and clean
+format = "$directory$git_status$character"
+
+# Add newline before prompt for better readability
+add_newline = true
+
+# Command timeout (milliseconds)
+command_timeout = 1000
+scan_timeout = 30
+
+# Git branch configuration with truncation
+[git_branch]
+truncation_length = 20
+truncation_symbol = "…"
+format = "[$symbol$branch(:$remote_branch)]($style) "
+style = "bold purple"
+symbol = " "
+
+# Custom format to handle username prefix removal
+# This will show "edt-725-unblock-ag…" instead of "rshrivastav/edt-725-unblock-agent-on-large-notebooks"
+always_show_remote = false
+only_attached = false
+
+# Git status configuration - minimal symbols
+[git_status]
+format = "[$all_status$ahead_behind]($style) "
+style = "red"
+conflicted = "!"
+ahead = "↑"
+behind = "↓"
+diverged = "↕"
+up_to_date = ""
+untracked = "?"
+stashed = ""
+modified = "!"
+staged = "+"
+renamed = "»"
+deleted = "✗"
+
+# Directory configuration - show just the current directory name
+[directory]
+truncation_length = 1
+format = "[$path]($style) "
+style = "bold cyan"
+read_only = "🔒"
+truncate_to_repo = false
+truncation_symbol = ""
+
+# Character (prompt symbol)
+[character]
+success_symbol = "[➜](bold green)"
+error_symbol = "[➜](bold red)"
+vimcmd_symbol = "[←](bold green)"
+
+# Disable Nix shell indicator for cleaner prompt
+[nix_shell]
+disabled = true
+
+# Disable language version displays for cleaner prompt
+[nodejs]
+disabled = true
+
+[python]
+disabled = true
+
+[rust]
+disabled = true
+
+# Command duration (show if command takes longer than 2 seconds)
+[cmd_duration]
+min_time = 2000
+format = "took [$duration]($style) "
+style = "yellow bold"
+
+# Time display (optional - shows current time)
+[time]
+disabled = true
+format = "🕙[$time]($style) "
+time_format = "%T"
+style = "bright-white"
+
+# Git commit hash (short)
+[git_commit]
+commit_hash_length = 7
+format = "[\\($hash$tag\\)]($style) "
+style = "green bold"
+only_detached = true
+
+# Disable package version for cleaner prompt
+[package]
+disabled = true

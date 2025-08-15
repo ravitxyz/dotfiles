@@ -569,5 +569,41 @@ return {
         vim.keymap.set("n", "<leader>dvh", "<cmd>DiffviewFileHistory<cr>", { desc = "Open diffview file history" })
         vim.keymap.set("n", "<leader>dvf", "<cmd>DiffviewFocusFiles<cr>", { desc = "Focus diffview files" })
         vim.keymap.set("n", "<leader>dvt", "<cmd>DiffviewToggleFiles<cr>", { desc = "Toggle diffview files" })
+        
+        -- Smart toggle - open/close diffview automatically
+        vim.keymap.set('n', '<leader><leader>v', function()
+            if next(require('diffview.lib').views) == nil then
+                vim.cmd('DiffviewOpen')
+            else
+                vim.cmd('DiffviewClose')
+            end
+        end, { desc = "Toggle Diffview" })
+
+        -- Workflow-specific keymaps
+        vim.keymap.set('n', '<leader>gd', function()
+            vim.cmd('DiffviewOpen origin/master...HEAD --imply-local')
+        end, { desc = "Diff against origin/master" })
+
+        -- Smart default branch detection
+        vim.keymap.set('n', '<leader>gm', function()
+            -- Try to detect default branch (master or main)
+            local default_branch = vim.fn.system("git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@'"):gsub('%s+', '')
+            if default_branch == '' then
+                default_branch = 'master'  -- fallback
+            end
+            vim.cmd('DiffviewOpen origin/' .. default_branch .. '...HEAD --imply-local')
+        end, { desc = "Diff against origin default branch" })
+
+        -- Additional workflow keymaps
+        vim.keymap.set('n', '<leader>gs', '<cmd>DiffviewOpen --cached<cr>', { desc = "Show staged changes" })
+        
+        vim.keymap.set('n', '<leader>gb', function()
+            local branch = vim.fn.input('Compare with branch: ')
+            if branch ~= '' then
+                vim.cmd('DiffviewOpen ' .. branch .. '...HEAD --imply-local')
+            end
+        end, { desc = "Diff against custom branch" })
+
+        vim.keymap.set('n', '<leader>gf', '<cmd>DiffviewFileHistory %<cr>', { desc = "File history for current file" })
     end,
 }

@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# hex-work: Create and switch to a Hex worktree session
+# Usage: hex-work BRANCH_NAME
+
+set -e
+
+BRANCH_NAME="$1"
+HEX_DIR="$HOME/projects/hex"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+usage() {
+    echo "Usage: hex-work BRANCH_NAME"
+    echo ""
+    echo "Examples:"
+    echo "  hex-work rshrivastav/edt-725-unblock-agent-on-large-notebooks"
+    echo "  hex-work ravit/edt-726-fix-cell-inventory"
+    echo ""
+    echo "Available worktrees:"
+    if [ -d "$HEX_DIR/worktrees" ]; then
+        ls -1 "$HEX_DIR/worktrees" 2>/dev/null || echo "  (none)"
+    else
+        echo "  (none)"
+    fi
+}
+
+if [ -z "$BRANCH_NAME" ]; then
+    usage
+    exit 1
+fi
+
+# Extract the part after the first slash for worktree folder and session name
+if [[ "$BRANCH_NAME" == */* ]]; then
+    WORKTREE_NAME="${BRANCH_NAME#*/}"  # Remove everything up to and including first slash
+else
+    WORKTREE_NAME="$BRANCH_NAME"
+fi
+
+WORKTREE_PATH="$HEX_DIR/worktrees/$WORKTREE_NAME"
+
+# Check if hex directory exists
+if [ ! -d "$HEX_DIR" ]; then
+    echo -e "${RED}Error: Hex directory not found at $HEX_DIR${NC}"
+    exit 1
+fi
+
+# If worktree doesn't exist, create it
+if [ ! -d "$WORKTREE_PATH" ]; then
+    echo -e "${BLUE}Creating worktree for $WORKTREE_NAME...${NC}"
+    
+    cd "$HEX_DIR"
+    
+    # Detect default branch (main or master)
+    DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "master")
+    
+    # Create the worktree
+    echo -e "${BLUE}Running: git worktree add worktrees/$WORKTREE_NAME -b $BRANCH_NAME $DEFAULT_BRANCH${NC}"
+    git worktree add "worktrees/$WORKTREE_NAME" -b "$BRANCH_NAME" "$DEFAULT_BRANCH"
+    
+    echo -e "${GREEN}✓ Worktree created successfully${NC}"
+    
+    # Update tmux-sessionizer
+    echo -e "${BLUE}Updating tmux-sessionizer...${NC}"
+    ~/dotfiles/scripts/update-tms-worktrees.sh
+else
+    echo -e "${GREEN}Worktree $WORKTREE_NAME already exists${NC}"
+fi
+
+# Create or attach to tmux session
+SESSION_NAME="$WORKTREE_NAME"
+echo -e "${BLUE}Creating/attaching to tmux session: $SESSION_NAME${NC}"
+
+# Check if session exists
+if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+    echo -e "${GREEN}Switching to existing session...${NC}"
+    tmux switch-client -t "$SESSION_NAME" 2>/dev/null || tmux attach -t "$SESSION_NAME"
+else
+    echo -e "${GREEN}Creating new session with 3 windows...${NC}"
+    
+    # Create session with first window
+    tmux new-session -s "$SESSION_NAME" -c "$WORKTREE_PATH" -d
+    
+    # Setup first window (editor)
+    tmux rename-window -t "$SESSION_NAME:1" "editor"
+    tmux send-keys -t "$SESSION_NAME:1" "nvim ." C-m
+    
+    # Create second window (terminal)
+    tmux new-window -t "$SESSION_NAME" -c "$WORKTREE_PATH"
+    tmux rename-window -t "$SESSION_NAME:2" "terminal"
+    tmux send-keys -t "$SESSION_NAME:2" "git status" C-m
+    
+    # Create third window (scratch/logs)
+    tmux new-window -t "$SESSION_NAME" -c "$WORKTREE_PATH"
+    tmux rename-window -t "$SESSION_NAME:3" "scratch"
+    
+    # Switch back to first window (editor)
+    tmux select-window -t "$SESSION_NAME:1"
+    
+    # Switch to the session (works from within tmux)
+    tmux switch-client -t "$SESSION_NAME" 2>/dev/null || tmux attach -t "$SESSION_NAME"
+fi

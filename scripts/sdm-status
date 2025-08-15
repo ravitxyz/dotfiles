@@ -1,0 +1,121 @@
+#!/bin/bash
+
+# sdm-status: Check StrongDM status and list resources
+# Usage: sdm-status [OPTIONS]
+
+set -e
+
+# Colors for output  
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+usage() {
+    echo "Usage: sdm-status [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  -r, --resources          List available resources"
+    echo "  -a, --access-requests    Show current access requests"
+    echo "  -s, --status            Show connection status (default)"
+    echo "  -h, --help              Show this help message"
+    echo ""
+    echo "Examples:"
+    echo "  sdm-status                    # Show status"
+    echo "  sdm-status -r                 # List resources"  
+    echo "  sdm-status -a                 # Show access requests"
+    echo "  sdm-status -r -a              # Show both resources and requests"
+}
+
+# Default action
+SHOW_STATUS=true
+SHOW_RESOURCES=false
+SHOW_ACCESS_REQUESTS=false
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        -r|--resources)
+            SHOW_RESOURCES=true
+            SHOW_STATUS=false
+            shift
+            ;;
+        -a|--access-requests)
+            SHOW_ACCESS_REQUESTS=true
+            SHOW_STATUS=false
+            shift
+            ;;
+        -s|--status)
+            SHOW_STATUS=true
+            shift
+            ;;
+        -h|--help)
+            usage
+            exit 0
+            ;;
+        *)
+            echo -e "${RED}Error: Unknown option $1${NC}"
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+# Check if sdm CLI is available
+if ! command -v sdm &> /dev/null; then
+    echo -e "${RED}Error: 'sdm' command not found. Please install the StrongDM CLI.${NC}"
+    echo "Install from: https://www.strongdm.com/docs/admin/install-cli"
+    exit 1
+fi
+
+# Check login status
+if ! sdm status &> /dev/null; then
+    echo -e "${RED}Not logged in to StrongDM.${NC}"
+    echo -e "${YELLOW}Run 'sdm login' to authenticate.${NC}"
+    exit 1
+fi
+
+if [ "$SHOW_STATUS" = true ]; then
+    echo -e "${BLUE}=== StrongDM Status ===${NC}"
+    sdm status
+    echo ""
+fi
+
+if [ "$SHOW_RESOURCES" = true ]; then
+    echo -e "${BLUE}=== Available Resources ===${NC}"
+    echo -e "${YELLOW}Databases:${NC}"
+    if sdm admin resources list --type database 2>/dev/null; then
+        echo ""
+    else
+        echo -e "${RED}Could not list database resources. You may not have admin permissions.${NC}"
+        echo ""
+    fi
+    
+    echo -e "${YELLOW}Servers:${NC}"
+    if sdm admin resources list --type server 2>/dev/null; then
+        echo ""
+    else
+        echo -e "${RED}Could not list server resources. You may not have admin permissions.${NC}"
+        echo ""
+    fi
+fi
+
+if [ "$SHOW_ACCESS_REQUESTS" = true ]; then
+    echo -e "${BLUE}=== Your Access Requests ===${NC}"
+    if sdm admin access-requests list 2>/dev/null; then
+        echo ""
+    else
+        echo -e "${RED}Could not list access requests. You may not have admin permissions.${NC}"
+        echo ""
+    fi
+fi
+
+# If no specific options provided, show helpful commands
+if [ "$SHOW_STATUS" = true ] && [ "$SHOW_RESOURCES" = false ] && [ "$SHOW_ACCESS_REQUESTS" = false ]; then
+    echo -e "${BLUE}=== Quick Commands ===${NC}"
+    echo -e "${YELLOW}List resources:${NC}      sdm-status -r"
+    echo -e "${YELLOW}Show access requests:${NC} sdm-status -a"
+    echo -e "${YELLOW}Request access:${NC}       sdm-request hex-prod-rds-replica"
+    echo -e "${YELLOW}Connect to resource:${NC}  sdm connect <resource-name>"
+fi

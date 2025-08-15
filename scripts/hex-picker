@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# hex-picker: Simple project/worktree picker using fzf
+
+PROJECTS_DIR="$HOME/projects"
+SELECTED=""
+
+# Build list of projects and worktrees
+ITEMS=()
+
+# Add pinned base session first
+ITEMS+=("󰒓 base [dotfiles]|$HOME/dotfiles")
+
+# Add main projects
+for project in "$PROJECTS_DIR"/*; do
+    if [ -d "$project" ] && [ -d "$project/.git" ]; then
+        project_name=$(basename "$project")
+        ITEMS+=("$project_name|$project")
+    fi
+done
+
+# Add worktrees
+for project_dir in "$PROJECTS_DIR"/*; do
+    if [ -d "$project_dir/worktrees" ]; then
+        for worktree in "$project_dir/worktrees"/*; do
+            if [ -d "$worktree" ] && [ -f "$worktree/.git" ] && grep -q "gitdir:" "$worktree/.git" 2>/dev/null; then
+                # Check if the worktree is still valid (referenced by main repo)
+                cd "$project_dir" && git worktree list --porcelain | grep -q "^worktree $(realpath "$worktree")" 2>/dev/null && {
+                    worktree_name=$(basename "$worktree")
+                    project_name=$(basename "$project_dir")
+                    ITEMS+=("$worktree_name [$project_name]|$worktree")
+                }
+            fi
+        done
+    fi
+done
+
+# Use fzf to pick
+if command -v fzf >/dev/null 2>&1; then
+    SELECTED=$(printf '%s\n' "${ITEMS[@]}" | \
+        sed 's/|.*$//' | \
+        fzf --height=60% --border=rounded --layout=reverse --prompt="󰉋 Select project: " --pointer="▶" --marker="✓" --preview-window=hidden)
+    
+    if [ -n "$SELECTED" ]; then
+        # Find the path for the selected item
+        for item in "${ITEMS[@]}"; do
+            if [[ "$item" == "$SELECTED|"* ]]; then
+                PATH_PART="${item#*|}"
+                break
+            fi
+        done
+        
+        if [ -n "$PATH_PART" ]; then
+            # Handle special base session
+            if [[ "$SELECTED" == *"base [dotfiles]"* ]]; then
+                SESSION_NAME="base"
+            else
+                SESSION_NAME=$(basename "$PATH_PART")
+            fi
+            
+            # Create or attach to tmux session
+            if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+                tmux switch-client -t "$SESSION_NAME" 2>/dev/null || tmux attach -t "$SESSION_NAME"
+            else
+                tmux new-session -d -s "$SESSION_NAME" -c "$PATH_PART"
+                tmux switch-client -t "$SESSION_NAME" 2>/dev/null || tmux attach -t "$SESSION_NAME"
+            fi
+        fi
+    fi
+else
+    echo "fzf not found. Install with: brew install fzf"
+    exit 1
+fi

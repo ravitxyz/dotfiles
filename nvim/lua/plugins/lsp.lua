@@ -1,6 +1,65 @@
 -- Consolidated LSP configuration
 -- Note: This file has been updated to use ruff's native language server with `ruff server`
 -- which provides both linting and formatting capabilities including import sorting
+-- Common LSP keymaps setup function (moved to top level for reuse)
+local function setup_lsp_keymaps(client, bufnr)
+  local opts = { buffer = bufnr, noremap = true, silent = true }
+  
+  -- Code navigation with auto-close for definition
+  vim.keymap.set("n", "gd", function()
+    vim.lsp.buf.definition({
+      on_list = function(options)
+        if #options.items == 1 then
+          -- Single definition - jump directly
+          vim.fn.setqflist({}, ' ', options)
+          vim.cmd('cfirst')
+          vim.cmd('cclose')
+        else
+          -- Multiple definitions - show list with auto-close on selection
+          vim.fn.setqflist({}, ' ', options)
+          vim.cmd('copen')
+          
+          -- Set up auto-close when selecting from quickfix
+          vim.api.nvim_create_autocmd("FileType", {
+            pattern = "qf",
+            once = true,
+            callback = function()
+              vim.keymap.set("n", "<CR>", function()
+                local line = vim.api.nvim_get_current_line()
+                vim.cmd('cc') -- Go to current quickfix item
+                vim.cmd('cclose') -- Close quickfix
+              end, { buffer = true, silent = true })
+            end
+          })
+        end
+      end
+    })
+  end, opts)
+  
+  vim.keymap.set("n", "gr", function()
+    vim.lsp.buf.references(nil, {
+      on_list = function(options)
+        vim.fn.setqflist({}, ' ', options)
+        vim.cmd('copen')
+      end
+    })
+  end, opts)
+  
+  vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
+  vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+  vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+  
+  -- Code actions
+  vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+  vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+  
+  -- Diagnostics
+  vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
+  vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+  vim.keymap.set("n", "<leader>le", vim.diagnostic.open_float, opts)
+  vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
+end
+
 return {
   -- Mason for installing language servers
   {
@@ -10,28 +69,6 @@ return {
       "neovim/nvim-lspconfig",
     },
     config = function()
-      -- Common LSP keymaps setup function
-      local function setup_lsp_keymaps(client, bufnr)
-        local opts = { buffer = bufnr, noremap = true, silent = true }
-        
-        -- Code navigation
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-        vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-        vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-        
-        -- Code actions
-        vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-        
-        -- Diagnostics
-        vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-        vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-        vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)
-        vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
-      end
-
       require("mason").setup({
         ui = {
           border = "rounded",
@@ -46,22 +83,52 @@ return {
           "lua_ls",       -- Lua language server
           "html",         -- HTML
           "cssls",        -- CSS
+          "jsonls",       -- JSON language server
+          "eslint",       -- ESLint for TypeScript/JavaScript (Hex monorepo)
         },
-        automatic_installation = true,
+        automatic_installation = false, -- Prevent auto-installation of unwanted servers
         handlers = {
-          -- Disable ts_ls (new name for tsserver) since we use typescript-tools.nvim
-          ["ts_ls"] = function() end,
-          ["tsserver"] = function() end,
+          -- Default handler for most servers
+          function(server_name)
+            -- Aggressively skip ALL TypeScript servers
+            if string.match(server_name:lower(), "typescript") or 
+               string.match(server_name:lower(), "ts_ls") or 
+               server_name == "tsserver" then
+              print("Blocked TypeScript server: " .. server_name)
+              return
+            end
+            require("lspconfig")[server_name].setup({
+              on_attach = setup_lsp_keymaps,
+            })
+          end,
+          -- Explicitly disable ALL TypeScript server variants
+          ["ts_ls"] = function() print("Blocked ts_ls") end,
+          ["tsserver"] = function() print("Blocked tsserver") end,
+          ["typescript-language-server"] = function() print("Blocked typescript-language-server") end,
+          ["typescript"] = function() print("Blocked typescript") end,
+          ["typescript_language_server"] = function() print("Blocked typescript_language_server") end,
         },
       })
       
       -- Configure language servers
       local lspconfig = require("lspconfig")
       
-      -- Explicitly disable ts_ls to prevent conflicts with typescript-tools
-      lspconfig.ts_ls.setup({
-        enabled = false,
+      -- TypeScript language server has been uninstalled to prevent conflicts with typescript-tools
+      -- No additional configuration needed
+      
+      -- ESLint language server (recommended for Hex monorepo)
+      lspconfig.eslint.setup({
+        on_attach = function(client, bufnr)
+          -- Disable formatting (handled by prettier via conform.nvim)
+          client.server_capabilities.documentFormattingProvider = false
+          client.server_capabilities.documentRangeFormattingProvider = false
+          setup_lsp_keymaps(client, bufnr)
+        end,
+        settings = {
+          workingDirectory = { mode = "auto" }
+        },
       })
+      
       
       -- Basedpyright for Python type checking and language features
       lspconfig.basedpyright.setup({
@@ -183,6 +250,22 @@ return {
         end,
         filetypes = { "css", "scss", "less" }
       })
+
+      -- JSON
+      lspconfig.jsonls.setup({
+        on_attach = function(client, bufnr)
+          -- Enable folding capability
+          client.server_capabilities.foldingRangeProvider = true
+          setup_lsp_keymaps(client, bufnr)
+        end,
+        settings = {
+          json = {
+            validate = { enable = true },
+            format = { enable = true }
+          }
+        },
+        filetypes = { "json", "jsonc" }
+      })
     end,
   },
   
@@ -192,32 +275,20 @@ return {
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
     opts = {
       on_attach = function(client, bufnr)
-        -- Enable folding capability
-        client.server_capabilities.foldingRangeProvider = true
+        -- Set client name for identification
+        client.name = "typescript-tools"
         
-        -- Common LSP keymaps setup function
-        local opts = { buffer = bufnr, noremap = true, silent = true }
+        -- Ensure folding capability is enabled
+        if client.server_capabilities then
+          client.server_capabilities.foldingRangeProvider = true
+        end
         
-        -- Code navigation
-        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-        vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-        vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-        vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-        
-        -- Code actions
-        vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-        vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-        
-        -- Diagnostics
-        vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-        vim.keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
-        vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, opts)
-        vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, opts)
+        -- Use the centralized keymap setup function
+        setup_lsp_keymaps(client, bufnr)
       end,
       settings = {
-        -- Spawn separate diagnostic server
-        separate_diagnostic_server = true,
+        -- Use single server for both language features and diagnostics
+        separate_diagnostic_server = false,
         
         -- Diagnostic publication trigger
         publish_diagnostic_on = "insert_leave",
@@ -229,9 +300,7 @@ return {
         },
         
         -- Enable folding ranges
-        tsserver_plugins = {
-          "@typescript-eslint/typescript-estree",
-        },
+        tsserver_plugins = {},
       },
     },
   },

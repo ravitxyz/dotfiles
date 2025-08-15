@@ -5,11 +5,7 @@ return {
     "nvim-tree/nvim-web-devicons",
     "MunifTanjim/nui.nvim",
   },
-  event = "VeryLazy",
-  keys = {
-    { "<leader>e", ":Neotree toggle float<CR>", silent = true, desc = "Float File Explorer" },
-    { "<leader><Tab>", ":Neotree toggle left<CR>", silent = true, desc = "Left File Explorer" },
-  },
+  lazy = false,
   config = function()
     require("neo-tree").setup({
       close_if_last_window = true,
