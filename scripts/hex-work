@@ -64,7 +64,16 @@ if [ ! -d "$WORKTREE_PATH" ]; then
     git worktree add "worktrees/$WORKTREE_NAME" -b "$BRANCH_NAME" "$DEFAULT_BRANCH"
     
     echo -e "${GREEN}✓ Worktree created successfully${NC}"
-    
+
+    # Copy .claude directory from main repo to worktree
+    if [ -d "$HEX_DIR/.claude" ]; then
+        echo -e "${BLUE}Copying .claude directory to worktree...${NC}"
+        cp -r "$HEX_DIR/.claude" "$WORKTREE_PATH/"
+        echo -e "${GREEN}✓ .claude directory copied${NC}"
+    else
+        echo -e "${YELLOW}Warning: .claude directory not found in main repo${NC}"
+    fi
+
     # Update tmux-sessionizer
     echo -e "${BLUE}Updating tmux-sessionizer...${NC}"
     ~/dotfiles/scripts/update-tms-worktrees.sh
@@ -81,7 +90,7 @@ if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
     echo -e "${GREEN}Switching to existing session...${NC}"
     tmux switch-client -t "$SESSION_NAME" 2>/dev/null || tmux attach -t "$SESSION_NAME"
 else
-    echo -e "${GREEN}Creating new session with 3 windows...${NC}"
+    echo -e "${GREEN}Creating new session with 3 windows (editor, terminal, claude)...${NC}"
     
     # Create session with first window
     tmux new-session -s "$SESSION_NAME" -c "$WORKTREE_PATH" -d
@@ -89,15 +98,15 @@ else
     # Setup first window (editor)
     tmux rename-window -t "$SESSION_NAME:1" "editor"
     tmux send-keys -t "$SESSION_NAME:1" "nvim ." C-m
-    
+
     # Create second window (terminal)
     tmux new-window -t "$SESSION_NAME" -c "$WORKTREE_PATH"
     tmux rename-window -t "$SESSION_NAME:2" "terminal"
-    tmux send-keys -t "$SESSION_NAME:2" "git status" C-m
-    
-    # Create third window (scratch/logs)
+
+    # Create third window (claude)
     tmux new-window -t "$SESSION_NAME" -c "$WORKTREE_PATH"
-    tmux rename-window -t "$SESSION_NAME:3" "scratch"
+    tmux rename-window -t "$SESSION_NAME:3" "claude"
+    tmux send-keys -t "$SESSION_NAME:3" "claude" C-m
     
     # Switch back to first window (editor)
     tmux select-window -t "$SESSION_NAME:1"

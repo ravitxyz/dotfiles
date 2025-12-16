@@ -6,7 +6,7 @@ cursor-style-blink = false
 shell-integration-features = no-cursor
 
 # theme
-theme = rose-pine
+theme = Rose Pine
 
 # theme = Kanagawa Wave
 #

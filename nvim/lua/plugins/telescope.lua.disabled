@@ -83,11 +83,36 @@ return {
         desc = "Live Grep",
       },
       {
+        "<leader>sp",
+        function()
+          local input = vim.fn.input("Search in directory (leave empty for all): ")
+          if input ~= "" then
+            require("telescope.builtin").live_grep({ search_dirs = { input } })
+          else
+            require("telescope.builtin").live_grep()
+          end
+        end,
+        desc = "Live Grep in Directory",
+      },
+      {
+        "<leader>sP",
+        function()
+          local word = vim.fn.expand("<cword>")
+          local input = vim.fn.input("Search '" .. word .. "' in directory (leave empty for all): ")
+          if input ~= "" then
+            require("telescope.builtin").grep_string({ search = word, search_dirs = { input } })
+          else
+            require("telescope.builtin").grep_string({ search = word })
+          end
+        end,
+        desc = "Grep Word in Directory",
+      },
+      {
         "<leader>sT",
         function()
           require("telescope.builtin").grep_string()
         end,
-        desc = "Grep String",
+        desc = "Grep String under cursor",
       },
       {
         "<leader>sk",

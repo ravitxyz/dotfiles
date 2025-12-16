@@ -277,12 +277,14 @@ return {
       on_attach = function(client, bufnr)
         -- Set client name for identification
         client.name = "typescript-tools"
-        
+
         -- Ensure folding capability is enabled
         if client.server_capabilities then
           client.server_capabilities.foldingRangeProvider = true
+          -- Disable semantic tokens to prevent errors
+          client.server_capabilities.semanticTokensProvider = nil
         end
-        
+
         -- Use the centralized keymap setup function
         setup_lsp_keymaps(client, bufnr)
       end,
