@@ -23,22 +23,24 @@ usage() {
     echo "  -d, --duration DURATION   Duration for access (default: '$DEFAULT_DURATION')"
     echo "  -r, --reason REASON       Reason for access (default: '$DEFAULT_REASON')"
     echo "  -c, --connect             Connect to resources after requesting access"
-    echo "  --hex-replicas            Request access to both hex-prod-rds-replica and hex-rc-rds-replica"
+    echo "  --hex-prd                 Request access to hex-prod-rds-replica
+  --hex-rc                  Request access to hex-rc-rds-replica and hex-rc-spellgrounds"
     echo "  -h, --help               Show this help message"
     echo ""
     echo "Duration format examples: 4h, 30m, 2h30m, 8h"
     echo ""
     echo "Examples:"
-    echo "  sdm-request --hex-replicas"
-    echo "  sdm-request --hex-replicas -c                    # Request and connect"
-    echo "  sdm-request --hex-replicas -d '8h' -r 'maintenance'"
+    echo "  sdm-request --hex-rc"
+    echo "  sdm-request --hex-prd -c                         # Request and connect"
+    echo "  sdm-request --hex-prd --hex-rc                   # Request both"
     echo "  sdm-request hex-prod-rds-replica hex-rc-rds-replica"
     echo "  sdm-request -d '8h' -r 'maintenance' hex-prod-rds-replica"
     echo "  sdm-request -c --duration '2h' --reason 'investigation' hex-prod-rds-replica"
     echo ""
     echo "Common resources:"
     echo "  - hex-prod-rds-replica"
-    echo "  - hex-rc-rds-replica" 
+    echo "  - hex-rc-rds-replica"
+    echo "  - hex-rc-spellgrounds"
     echo "  - hex-staging-rds-replica"
     echo ""
     echo "Note: This script uses the 'sdm' CLI. Make sure it's installed and configured."
@@ -48,7 +50,8 @@ usage() {
 DURATION="$DEFAULT_DURATION"
 REASON="$DEFAULT_REASON"
 RESOURCES=()
-HEX_REPLICAS=false
+HEX_PRD=false
+HEX_RC=false
 CONNECT_AFTER=false
 
 while [[ $# -gt 0 ]]; do
@@ -65,8 +68,12 @@ while [[ $# -gt 0 ]]; do
             CONNECT_AFTER=true
             shift
             ;;
-        --hex-replicas)
-            HEX_REPLICAS=true
+        --hex-prd)
+            HEX_PRD=true
+            shift
+            ;;
+        --hex-rc)
+            HEX_RC=true
             shift
             ;;
         -h|--help)
@@ -85,9 +92,12 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Add hex replica resources if flag was specified
-if [ "$HEX_REPLICAS" = true ]; then
-    RESOURCES+=("hex-prod-rds-replica" "hex-rc-rds-replica")
+# Add hex resources if flags were specified
+if [ "$HEX_PRD" = true ]; then
+    RESOURCES+=("hex-prod-rds-replica")
+fi
+if [ "$HEX_RC" = true ]; then
+    RESOURCES+=("hex-rc-rds-replica" "hex-rc-spellgrounds")
 fi
 
 # Check if resources were provided

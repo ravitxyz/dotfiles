@@ -1,6 +1,12 @@
 return {
     "sindrets/diffview.nvim",
     cmd = { "DiffviewOpen", "DiffviewClose", "DiffviewToggleFiles", "DiffviewFocusFiles" },
+    keys = {
+        { "<leader>gd", desc = "Toggle diff against origin/master" },
+        { "<leader>dvo", desc = "Open diffview" },
+        { "<leader>dvc", desc = "Close diffview" },
+        { "<leader><leader>v", desc = "Toggle Diffview" },
+    },
     config = function()
         require("diffview").setup({
             diff_binaries = false,
@@ -581,8 +587,12 @@ return {
 
         -- Workflow-specific keymaps
         vim.keymap.set('n', '<leader>gd', function()
-            vim.cmd('DiffviewOpen origin/master...HEAD --imply-local')
-        end, { desc = "Diff against origin/master" })
+            if next(require('diffview.lib').views) == nil then
+                vim.cmd('DiffviewOpen origin/master...HEAD --imply-local')
+            else
+                vim.cmd('DiffviewClose')
+            end
+        end, { desc = "Toggle diff against origin/master" })
 
         -- Smart default branch detection
         vim.keymap.set('n', '<leader>gm', function()

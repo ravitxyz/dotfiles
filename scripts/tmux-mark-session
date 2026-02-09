@@ -1,0 +1,77 @@
+#!/bin/bash
+# tmux-mark-session: Mark sessions and toggle between two marked sessions
+# Usage: tmux-mark-session mark   - Mark current session
+#        tmux-mark-session toggle - Toggle between marked sessions
+
+MARKS_FILE="$HOME/.tmux-session-marks"
+
+current_session=$(tmux display-message -p '#S')
+
+case "$1" in
+    mark)
+        # Read existing marks
+        mark_a=""
+        mark_b=""
+        if [[ -f "$MARKS_FILE" ]]; then
+            mark_a=$(sed -n '1p' "$MARKS_FILE")
+            mark_b=$(sed -n '2p' "$MARKS_FILE")
+        fi
+
+        # If current session is already marked, do nothing
+        if [[ "$current_session" == "$mark_a" ]]; then
+            tmux display-message "Session '$current_session' already marked as A"
+            exit 0
+        fi
+
+        if [[ "$current_session" == "$mark_b" ]]; then
+            tmux display-message "Session '$current_session' already marked as B"
+            exit 0
+        fi
+
+        # Shift A to B, set current as A
+        echo -e "$current_session\n$mark_a" > "$MARKS_FILE"
+
+        if [[ -n "$mark_a" ]]; then
+            tmux display-message "Marked: A='$current_session' B='$mark_a'"
+        else
+            tmux display-message "Marked: A='$current_session' (mark another session for B)"
+        fi
+        ;;
+
+    toggle)
+        if [[ ! -f "$MARKS_FILE" ]]; then
+            tmux display-message "No sessions marked. Use prefix+m to mark sessions."
+            exit 1
+        fi
+
+        mark_a=$(sed -n '1p' "$MARKS_FILE")
+        mark_b=$(sed -n '2p' "$MARKS_FILE")
+
+        if [[ -z "$mark_a" || -z "$mark_b" ]]; then
+            tmux display-message "Need two marked sessions. Currently: A='$mark_a' B='$mark_b'"
+            exit 1
+        fi
+
+        # Toggle to the other session
+        if [[ "$current_session" == "$mark_a" ]]; then
+            tmux switch-client -t "$mark_b" 2>/dev/null || tmux display-message "Session '$mark_b' not found"
+        else
+            tmux switch-client -t "$mark_a" 2>/dev/null || tmux display-message "Session '$mark_a' not found"
+        fi
+        ;;
+
+    show)
+        if [[ -f "$MARKS_FILE" ]]; then
+            mark_a=$(sed -n '1p' "$MARKS_FILE")
+            mark_b=$(sed -n '2p' "$MARKS_FILE")
+            tmux display-message "Marks: A='$mark_a' B='$mark_b'"
+        else
+            tmux display-message "No sessions marked"
+        fi
+        ;;
+
+    *)
+        echo "Usage: tmux-mark-session {mark|toggle|show}"
+        exit 1
+        ;;
+esac

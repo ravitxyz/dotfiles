@@ -74,6 +74,15 @@ if [ ! -d "$WORKTREE_PATH" ]; then
         echo -e "${YELLOW}Warning: .claude directory not found in main repo${NC}"
     fi
 
+    # Copy modified run-dev scripts for shared Docker containers
+    echo -e "${BLUE}Copying run-dev scripts for shared database...${NC}"
+    cp "$HEX_DIR/scripts/run-dev.sh" "$WORKTREE_PATH/scripts/run-dev.sh"
+    if [ -f "$HEX_DIR/scripts/run-dev-tmux.sh" ]; then
+        cp "$HEX_DIR/scripts/run-dev-tmux.sh" "$WORKTREE_PATH/scripts/run-dev-tmux.sh"
+    fi
+    cp "$HEX_DIR/CLAUDE.md" "$WORKTREE_PATH/CLAUDE.md"
+    echo -e "${GREEN}✓ Run-dev scripts copied${NC}"
+
     # Update tmux-sessionizer
     echo -e "${BLUE}Updating tmux-sessionizer...${NC}"
     ~/dotfiles/scripts/update-tms-worktrees.sh

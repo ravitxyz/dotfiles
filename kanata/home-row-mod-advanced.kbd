@@ -56,7 +56,7 @@
   @tab @q   @w   e    r    t    y    u    i    o    p    [    ]    \
   @caps @a  @s  @d   @f   g    @h   j    k    @l   @;   '    ret
   lsft z    x    c    v    b    n    m    ,    .    /    rsft
-  @fnl  lctl @lmet @lalt           @sym           @ralt @rmet
+  @fnl  lctl @lmet-key @lalt-key           @sym           @ralt-key @rmet-key
 )
 
 ;; Modified function layer with function keys in place of media keys
@@ -187,9 +187,9 @@
   vup volu  ;; Volume up using kanata's built-in key
   vdn vold  ;; Volume down using kanata's built-in key
   
-  ;; Modifier key remappings
-  lmet spc
-  lalt tab
-  rmet bspc
-  ralt (tap-hold $fast-tap-time $fast-hold-time ret (layer-toggle fnkeys))
+  ;; Modifier key remappings (physical key positions)
+  lmet-key spc
+  lalt-key tab
+  rmet-key bspc
+  ralt-key (tap-hold $fast-tap-time $fast-hold-time ret (layer-toggle fnkeys))
 )
