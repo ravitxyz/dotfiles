@@ -588,7 +588,7 @@ return {
         -- Workflow-specific keymaps
         vim.keymap.set('n', '<leader>gd', function()
             if next(require('diffview.lib').views) == nil then
-                vim.cmd('DiffviewOpen origin/master...HEAD --imply-local')
+                vim.cmd('DiffviewOpen master...HEAD')
             else
                 vim.cmd('DiffviewClose')
             end
@@ -615,5 +615,6 @@ return {
         end, { desc = "Diff against custom branch" })
 
         vim.keymap.set('n', '<leader>gf', '<cmd>DiffviewFileHistory %<cr>', { desc = "File history for current file" })
+        vim.keymap.set('n', '<leader>gh', '<cmd>DiffviewFileHistory --range=master..HEAD<cr>', { desc = "Per-commit review against master" })
     end,
 }

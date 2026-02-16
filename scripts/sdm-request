@@ -49,6 +49,7 @@ usage() {
 # Parse command line arguments
 DURATION="$DEFAULT_DURATION"
 REASON="$DEFAULT_REASON"
+REASON_SET=false
 RESOURCES=()
 HEX_PRD=false
 HEX_RC=false
@@ -61,7 +62,8 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         -r|--reason)
-            REASON="$2" 
+            REASON="$2"
+            REASON_SET=true
             shift 2
             ;;
         -c|--connect)
@@ -95,6 +97,15 @@ done
 # Add hex resources if flags were specified
 if [ "$HEX_PRD" = true ]; then
     RESOURCES+=("hex-prod-rds-replica")
+    # Require manual reason for prod access
+    if [ "$REASON_SET" = false ]; then
+        echo -e "${YELLOW}Production access requires a reason.${NC}"
+        read -p "Enter reason for prod access: " REASON
+        if [ -z "$REASON" ]; then
+            echo -e "${RED}Error: Reason is required for production access${NC}"
+            exit 1
+        fi
+    fi
 fi
 if [ "$HEX_RC" = true ]; then
     RESOURCES+=("hex-rc-rds-replica" "hex-rc-spellgrounds")
